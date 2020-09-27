@@ -14,11 +14,12 @@ object DragonflySocketClient {
     fun main(args: Array<String>) {
         SocketLogger.setCustomLogger()
 
-        client = Client()
-        client.start()
-        client.connect(500, "127.0.0.1", 7331)
-        client.registerPackets()
-        client.registerListeners("net.dragonfly.socket.client.listener")
-        client.sendTCP(SessionStartPackage(jwt = "ey15n7ewt5g6735g56e423fr45.3h5j7T&4723g56g35r2.32j57g2gv5672f5f3"))
+        client = Client().apply {
+            start()
+            connect(500, "127.0.0.1", 7331)
+            registerPackets()
+            registerListeners("net.dragonfly.socket.client.listener")
+            sendTCP(SessionStartPackage(jwt = "ey15n7ewt5g6735g56e423fr45.3h5j7T&4723g56g35r2.32j57g2gv5672f5f3"))
+        }
     }
 }
