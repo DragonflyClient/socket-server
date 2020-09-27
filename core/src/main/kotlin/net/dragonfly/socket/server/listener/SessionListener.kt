@@ -2,16 +2,16 @@ package net.dragonfly.socket.server.listener
 
 import com.esotericsoftware.kryonet.Connection
 import net.dragonfly.socket.collector.PacketListener
-import net.dragonfly.socket.packets.SessionAcceptedPackage
-import net.dragonfly.socket.packets.SessionStartPackage
+import net.dragonfly.socket.packets.client.StartSessionRequestPacket
+import net.dragonfly.socket.packets.server.StartSessionResponsePacket
 import org.apache.logging.log4j.LogManager
 
 @PacketListener
 class SessionListener {
 
     @PacketListener
-    fun start(connection: Connection, packet: SessionStartPackage) {
+    fun request(connection: Connection, packet: StartSessionRequestPacket) {
         LogManager.getLogger().info("Starting session on $connection using JWT: " + packet.jwt)
-        connection.sendTCP(SessionAcceptedPackage("it was good"))
+        connection.sendTCP(StartSessionResponsePacket(true))
     }
 }
