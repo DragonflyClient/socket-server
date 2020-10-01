@@ -30,6 +30,20 @@ kotlin {
     }
 }
 
+tasks {
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+}
+
 application {
     mainClassName = "net.dragonfly.socket.server.DragonflySocketServer"
 }
