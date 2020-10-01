@@ -4,8 +4,8 @@ import com.esotericsoftware.kryonet.*
 import net.dragonfly.socket.collector.ListenerCollector.registerListeners
 import net.dragonfly.socket.collector.PacketCollector.registerPackets
 import net.dragonfly.socket.logger.SocketLogger
-import net.dragonfly.socket.server.session.SessionManager
 import net.dragonfly.socket.server.session.SessionManager.sessionOrNull
+import net.dragonfly.socket.server.statistics.Statistics
 import org.apache.logging.log4j.LogManager
 import kotlin.concurrent.fixedRateTimer
 
@@ -35,6 +35,20 @@ object DragonflySocketServer {
                 }.forEach {
                     LogManager.getLogger().info("${it.connection} could not be kept alive...")
                     it.connection.close()
+                }
+        }
+
+        fixedRateTimer("Online Time Tracker", daemon = true, 0, 1000 * 20) {
+            server.connections.mapNotNull { it.sessionOrNull }
+                .filter {
+                    val lastKeepActive = it.metadata["last_keep_active"] as? Long ?: it.createdAt
+                    val inactive = it.metadata["inactive"] as? Boolean ?: false
+                    !inactive && System.currentTimeMillis() - lastKeepActive > 1000 * 60
+                }.forEach {
+                    it.metadata["first_active_time"] = null
+                    it.metadata["inactive"] = true
+                    LogManager.getLogger().info("${it.account.username} is now afk.")
+                    Statistics.updateOnlineTime(it)
                 }
         }
     }

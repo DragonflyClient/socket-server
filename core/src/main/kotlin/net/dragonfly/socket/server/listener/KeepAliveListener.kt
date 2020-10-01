@@ -17,6 +17,5 @@ class KeepAliveListener {
     fun keepAlive(connection: Connection, packet: KeepAlivePacket) = synchronized(connection) {
         val metadata = connection.session.metadata
         metadata["last_keep_alive"] = System.currentTimeMillis()
-        LogManager.getLogger().info("$connection has been kept alive ;)")
     }
 }
