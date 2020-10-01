@@ -19,10 +19,17 @@ import kotlin.reflect.jvm.jvmErasure
 object ListenerCollector {
 
     /**
-     * All collected listeners. Values are stored when invoking the [collectListeners]
+     * All collected packet listeners. Values are stored when invoking the [collectListeners]
      * functions.
      */
-    var listeners by Delegates.notNull<List<KClass<*>>>()
+    var packetListeners by Delegates.notNull<List<KClass<*>>>()
+        private set
+
+    /**
+     * All collected server listeners. These ones are plain sub types of [Listener] and have
+     * the advantage of more flexibility.
+     */
+    var serverListeners by Delegates.notNull<List<KClass<out Listener>>>()
         private set
 
     /**
@@ -32,12 +39,14 @@ object ListenerCollector {
 
     /**
      * Collects the listeners in the given [package] recursively and outputs the result to
-     * the [listeners] property.
+     * the [packetListeners] property.
      */
     fun collectListeners(`package`: String) {
         val reflections = Reflections(ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(`package`)))
-        listeners = reflections.getTypesAnnotatedWith(PacketListener::class.java).map { it.kotlin }
-        LogManager.getLogger().info("Collected ${listeners.size} listeners: " + listeners.joinToString { it.simpleName!! })
+        packetListeners = reflections.getTypesAnnotatedWith(PacketListener::class.java).map { it.kotlin }
+        serverListeners = reflections.getSubTypesOf(Listener::class.java).map { it.kotlin }.filter { it.hasAnnotation<ServerListener>() }
+        LogManager.getLogger().info("Collected ${packetListeners.size} packet listeners: " + packetListeners.joinToString { it.simpleName!! })
+        LogManager.getLogger().info("Collected ${serverListeners.size} server listeners: " + serverListeners.joinToString { it.simpleName!! })
     }
 
     /**
@@ -45,7 +54,8 @@ object ListenerCollector {
      */
     fun EndPoint.registerListeners(`package`: String) {
         collectListeners(`package`)
-        listeners.forEach { addListener(it.createListener()) }
+        packetListeners.forEach { addListener(it.createListener()) }
+        serverListeners.forEach { addListener(Listener.ThreadedListener(it.createInstance(), threadPool)) }
     }
 
     /**

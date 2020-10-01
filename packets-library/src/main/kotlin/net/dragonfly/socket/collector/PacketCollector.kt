@@ -1,8 +1,7 @@
 package net.dragonfly.socket.collector
 
-import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryonet.EndPoint
-import net.dragonfly.socket.collector.ListenerCollector.listeners
+import net.dragonfly.socket.collector.ListenerCollector.packetListeners
 import net.dragonfly.socket.packets.Packet
 import org.apache.logging.log4j.LogManager
 import org.reflections.Reflections
@@ -30,7 +29,7 @@ object PacketCollector {
 
     /**
      * Collects the packets using the [reflections] instance and outputs the result to
-     * the [listeners] property.
+     * the [packetListeners] property.
      */
     fun collectPackets() {
         packets = reflections.getSubTypesOf(Packet::class.java)
