@@ -18,7 +18,7 @@ class SessionListener {
      * Starts a new session on an incoming [StartSessionRequestPacket].
      */
     @PacketListener
-    fun startSession(connection: Connection, packet: StartSessionRequestPacket) {
+    fun startSession(connection: Connection, packet: StartSessionRequestPacket) = synchronized(connection) {
         val jwt = packet.jwt!!
 
         LogManager.getLogger().info("Starting session on $connection...")
