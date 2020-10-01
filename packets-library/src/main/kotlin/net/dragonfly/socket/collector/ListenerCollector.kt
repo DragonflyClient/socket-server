@@ -55,11 +55,17 @@ object ListenerCollector {
         }
 
         override fun received(connection: Connection, incoming: Any?) {
-            functions.filter {
-                val params = it.parameters.filter { param -> param.kind == KParameter.Kind.VALUE }
-                params[1].type.jvmErasure.isInstance(incoming)
-            }.forEach {
-                it.call(instance, connection, incoming)
+            try {
+                functions.filter {
+                    val params = it.parameters.filter { param -> param.kind == KParameter.Kind.VALUE }
+                    params[1].type.jvmErasure.isInstance(incoming)
+                }.forEach {
+                    it.call(instance, connection, incoming)
+                }
+            } catch (e: Throwable) {
+                LogManager.getLogger().error("Could not dispatch packet-receive to ${this@createListener.simpleName} " +
+                        "for incoming packet $incoming on connection $connection:")
+                e.printStackTrace()
             }
         }
     }
