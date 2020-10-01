@@ -25,6 +25,9 @@ object ListenerCollector {
     var listeners by Delegates.notNull<List<KClass<*>>>()
         private set
 
+    /**
+     * The thread pool that is used to execute listeners.
+     */
     private val threadPool = Executors.newCachedThreadPool(ThreadFactoryBuilder().setNameFormat("Listener-Executor-%d").build())
 
     /**
@@ -58,20 +61,19 @@ object ListenerCollector {
             }.filter {
                 val params = it.parameters.filter { param -> param.kind == KParameter.Kind.VALUE }
                 params.size == 2 && params[0].type.jvmErasure == Connection::class
+            }.groupBy {
+                val params = it.parameters.filter { param -> param.kind == KParameter.Kind.VALUE }
+                params[1].type.jvmErasure
             }
 
-            override fun received(connection: Connection, incoming: Any?) {
+            override fun received(connection: Connection, incoming: Any) {
                 try {
-                    functions.filter {
-                        val params = it.parameters.filter { param -> param.kind == KParameter.Kind.VALUE }
-                        params[1].type.jvmErasure.isInstance(incoming)
-                    }.forEach {
+                    functions[incoming::class]?.forEach {
                         it.call(instance, connection, incoming)
                     }
                 } catch (e: Throwable) {
                     LogManager.getLogger().error("Could not dispatch packet-receive to ${this@createListener.simpleName} " +
-                            "for incoming packet $incoming on connection $connection:")
-                    e.printStackTrace()
+                            "for incoming packet $incoming on connection $connection: ", e)
                 }
             }
         }, threadPool
