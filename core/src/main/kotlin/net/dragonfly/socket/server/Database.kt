@@ -1,6 +1,6 @@
 package net.dragonfly.socket.server
 
-import net.dragonfly.socket.server.secrets.CONNECTION_STRING
+import net.dragonfly.secrets.CONNECTION_STRING
 import org.bson.Document
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
