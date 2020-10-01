@@ -1,8 +1,8 @@
 package net.dragonfly.socket.server.session
 
 import com.esotericsoftware.kryonet.Connection
-import khttp.post
 import net.dragonfly.library.DragonflyLibrary
+import net.dragonfly.socket.server.statistics.Statistics
 
 /**
  * Manages the creation and the retrieval of sessions.
@@ -42,6 +42,12 @@ object SessionManager {
      * Finds a session by it's [connection] and returns null if none is found.
      */
     fun findSession(connection: Connection) = sessions[connection]
+
+    /**
+     * Ends the session of the given [connection] by removing it from the [sessions]
+     * storage.
+     */
+    fun endSession(connection: Connection) = sessions.remove(connection)
 
     /**
      * Convenient access to the [Session] of a [Connection] that throws an error if no session
