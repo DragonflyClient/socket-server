@@ -48,5 +48,11 @@ object SessionManager {
      * is set.
      */
     val Connection.session: Session
-        get() = findSession(this) ?: error("Socket connection has no associated session!")
+        get() = sessionOrNull ?: error("Socket connection has no associated session!")
+
+    /**
+     * Convenient access to the [Session] of a [Connection] or null if no session has been set.
+     */
+    val Connection.sessionOrNull: Session?
+        get() = findSession(this)
 }
