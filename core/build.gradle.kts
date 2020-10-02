@@ -22,6 +22,8 @@ dependencies {
     implementation("khttp:khttp:1.0.0")
     implementation("com.google.code.gson:gson:2.7")
     implementation("org.json:json:20200518")
+    implementation("org.slf4j:slf4j-api:1.7.25")
+    implementation("org.slf4j:slf4j-log4j12:1.7.25")
 }
 
 kotlin {
