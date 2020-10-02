@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager
 @ServerListener
 class DisconnectListener : Listener() {
 
-    override fun disconnected(connection: Connection) {
+    override fun disconnected(connection: Connection) = synchronized(connection) {
         try {
             Statistics.updateOnlineTime(connection.session)
             SessionManager.endSession(connection)

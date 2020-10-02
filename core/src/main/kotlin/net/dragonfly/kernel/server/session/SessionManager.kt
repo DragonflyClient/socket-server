@@ -26,6 +26,10 @@ object SessionManager {
 
             val username = response.username
             val uuid = response.uuid
+
+            // check if account is already used in a session
+            if (sessions.values.any { it.account.uuid == uuid }) return null
+
             connection.setName("$username#$uuid")
 
             val session = Session(connection, jwt, response)
