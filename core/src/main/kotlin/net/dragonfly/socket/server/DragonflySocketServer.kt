@@ -43,7 +43,7 @@ object DragonflySocketServer {
                 .filter {
                     val lastKeepActive = it.metadata["last_keep_active"] as? Long ?: it.createdAt
                     val inactive = it.metadata["inactive"] as? Boolean ?: false
-                    !inactive && System.currentTimeMillis() - lastKeepActive > 1000 * 60
+                    !inactive && System.currentTimeMillis() - lastKeepActive > 1000 * 60 * 2
                 }.forEach {
                     it.metadata["first_active_time"] = null
                     it.metadata["inactive"] = true

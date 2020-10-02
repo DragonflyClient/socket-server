@@ -19,7 +19,8 @@ class KeepActiveListener {
         val inactive = metadata["inactive"] as? Boolean
 
         if (inactive != false) {
-            LogManager.getLogger().info("${connection.session.account.username} is no longer afk.")
+            if (inactive == true) // if the user was afk before
+                LogManager.getLogger().info("${connection.session.account.username} is no longer afk.")
             metadata["first_keep_active"] = System.currentTimeMillis()
             metadata["inactive"] = false
         }
