@@ -4,12 +4,15 @@ import com.mongodb.client.model.*
 import kotlinx.coroutines.runBlocking
 import net.dragonfly.kernel.server.Database
 import net.dragonfly.kernel.server.session.Session
+import org.apache.logging.log4j.LogManager
 import java.text.SimpleDateFormat
 
 object Statistics {
 
     fun updateOnlineTime(session: Session) = runBlocking {
-        val firstActiveTime = session.metadata["first_active_time"] as? Long ?: session.createdAt
+        if (session.metadata["inactive"] == true) return@runBlocking
+        val firstActiveTime = session.metadata["first_keep_active"] as? Long ?: return@runBlocking
+
         val millis = System.currentTimeMillis() - firstActiveTime
         val time = millis / (1000 * 60) // in minutes
 

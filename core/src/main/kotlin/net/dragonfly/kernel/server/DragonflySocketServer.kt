@@ -42,13 +42,13 @@ object DragonflySocketServer {
             server.connections.mapNotNull { it.sessionOrNull }
                 .filter {
                     val lastKeepActive = it.metadata["last_keep_active"] as? Long ?: it.createdAt
-                    val inactive = it.metadata["inactive"] as? Boolean ?: false
-                    !inactive && System.currentTimeMillis() - lastKeepActive > 1000 * 60 * 2
+                    val inactive = it.metadata["inactive"] as? Boolean ?: true
+                    !inactive && System.currentTimeMillis() - lastKeepActive > 1000 * 40
                 }.forEach {
-                    it.metadata["first_active_time"] = null
+                    Statistics.updateOnlineTime(it)
+                    it.metadata["first_keep_active"] = null
                     it.metadata["inactive"] = true
                     LogManager.getLogger().info("${it.account.username} is now afk.")
-                    Statistics.updateOnlineTime(it)
                 }
         }
     }
