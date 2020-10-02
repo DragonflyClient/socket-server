@@ -31,6 +31,24 @@ kotlin {
 }
 
 tasks {
+    register<Jar>("fullJar") {
+        archiveClassifier.set("full")
+
+        manifest {
+            attributes["Main-Class"] = "net.dragonfly.kernel.server.DragonflySocketServer"
+        }
+
+        from(configurations.runtimeClasspath.get()
+            .onEach { println(it.name) }
+            .map { if (it.isDirectory) it else zipTree(it) }
+        )
+        with(jar.get() as CopySpec)
+    }
+
+    build.configure {
+        dependsOn("fullJar")
+    }
+
     compileKotlin {
         kotlinOptions {
             jvmTarget = "1.8"
@@ -45,5 +63,5 @@ tasks {
 }
 
 application {
-    mainClassName = "net.dragonfly.socket.server.DragonflySocketServer"
+    mainClassName = "net.dragonfly.kernel.server.DragonflySocketServer"
 }

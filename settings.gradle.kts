@@ -1,3 +1,3 @@
 
-rootProject.name = "dragonfly-socket-server"
+rootProject.name = "dragonfly-kernel"
 include("packets-library", "core")

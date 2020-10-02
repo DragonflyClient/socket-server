@@ -4,4 +4,4 @@ build
 gradle
 local.properties
 
-core/src/main/kotlin/net/dragonfly/socket/server/secrets
+core/src/main/kotlin/net/dragonfly/secrets/
