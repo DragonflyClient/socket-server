@@ -12,9 +12,13 @@ import org.apache.logging.log4j.LogManager
 class DisconnectListener : Listener() {
 
     override fun disconnected(connection: Connection) {
-        Statistics.updateOnlineTime(connection.session)
+        try {
+            Statistics.updateOnlineTime(connection.session)
+            SessionManager.endSession(connection)
 
-        SessionManager.endSession(connection)
-        LogManager.getLogger().info("Ended session of $connection")
+            LogManager.getLogger().info("Ended session of $connection")
+        } catch (e: Throwable) {
+            LogManager.getLogger().warn("Could not end session of $connection.")
+        }
     }
 }
