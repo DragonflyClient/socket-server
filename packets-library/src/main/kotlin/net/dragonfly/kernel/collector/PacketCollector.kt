@@ -24,7 +24,7 @@ object PacketCollector {
     /**
      * All collected packets. Values are stored when invoking the [collectPackets] functions.
      */
-    var packets by Delegates.notNull<Set<Class<out Packet>>>()
+    var packets by Delegates.notNull<List<Class<out Packet>>>()
         private set
 
     /**
@@ -32,7 +32,7 @@ object PacketCollector {
      * the [packetListeners] property.
      */
     fun collectPackets() {
-        packets = reflections.getSubTypesOf(Packet::class.java)
+        packets = reflections.getSubTypesOf(Packet::class.java).sortedBy { it.name }
         LogManager.getLogger().info("Collected ${packets.size} packets: " + packets.joinToString { it.simpleName })
     }
 
