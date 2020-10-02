@@ -1,13 +1,11 @@
 package net.dragonfly.kernel.client
 
 import com.esotericsoftware.kryonet.*
-import net.dragonfly.kernel.collector.ListenerCollector
 import net.dragonfly.kernel.collector.ListenerCollector.registerListeners
 import net.dragonfly.kernel.collector.PacketCollector.registerPackets
 import net.dragonfly.kernel.logger.SocketLogger
 import net.dragonfly.kernel.packets.client.*
 import kotlin.concurrent.fixedRateTimer
-import kotlin.reflect.full.createInstance
 
 object DragonflySocketClient {
     lateinit var client: Client
