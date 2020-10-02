@@ -4,4 +4,8 @@ import net.dragonfly.kernel.packets.Packet
 
 class StartSessionRequestPacket @JvmOverloads constructor(
     val jwt: String? = null
-) : Packet
+) : Packet {
+    companion object {
+        const val serialVersionUID = 275L
+    }
+}
