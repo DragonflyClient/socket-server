@@ -12,6 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.jvmName
 
 /**
  * Responsible for collecting all listeners annotated with [`@PacketListener`][PacketListener].
@@ -44,8 +45,11 @@ object ListenerCollector {
     @OptIn(ExperimentalStdlibApi::class)
     fun collectListeners(`package`: String) {
         val reflections = Reflections(ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(`package`)))
-        packetListeners = reflections.getTypesAnnotatedWith(PacketListener::class.java).map { it.kotlin }
-        serverListeners = reflections.getSubTypesOf(Listener::class.java).map { it.kotlin }.filter { it.hasAnnotation<ServerListener>() }
+        packetListeners = reflections.getTypesAnnotatedWith(PacketListener::class.java)
+            .mapNotNull { it.tryKotlinClass() }
+        serverListeners = reflections.getSubTypesOf(Listener::class.java)
+            .mapNotNull { it.tryKotlinClass() }
+            .filter { it.tryHasAnnotation<ServerListener>() }
         LogManager.getLogger().info("Collected ${packetListeners.size} packet listeners: " + packetListeners.joinToString { it.simpleName!! })
         LogManager.getLogger().info("Collected ${serverListeners.size} server listeners: " + serverListeners.joinToString { it.simpleName!! })
     }
@@ -57,6 +61,28 @@ object ListenerCollector {
         collectListeners(`package`)
         packetListeners.forEach { addListener(it.createListener()) }
         serverListeners.forEach { addListener(Listener.ThreadedListener(it.createInstance(), threadPool)) }
+    }
+
+    /**
+     * Tries get the corresponding Kotlin class of this class and returns null if this failed.
+     */
+    private fun <T : Any> Class<T>.tryKotlinClass(): KClass<T>? = try {
+        this.kotlin.simpleName!!
+        this.kotlin
+    } catch (e: Throwable) {
+        LogManager.getLogger().info("Could not map ${this.name} to a Kotlin class!")
+        null
+    }
+
+    /**
+     * Tries to check whether the class has the given annotation [A] while returning false if
+     * any exception occurred.
+     */
+    private inline fun <reified A : Annotation> KClass<*>.tryHasAnnotation() = try {
+        hasAnnotation<A>()
+    } catch (e: Throwable) {
+        LogManager.getLogger().info("Could not check if $jvmName has an annotation!");
+        false
     }
 
     /**
