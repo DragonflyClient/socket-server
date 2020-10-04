@@ -42,5 +42,6 @@ object PacketCollector {
     fun EndPoint.registerPackets() {
         collectPackets()
         packets.forEach { kryo.register(it) }
+        kryo.register(Array<String>::class.java)
     }
 }
