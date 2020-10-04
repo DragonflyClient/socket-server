@@ -1,5 +1,7 @@
 package net.dragonfly.kernel.server.utils
 
+import com.esotericsoftware.kryonet.Connection
+
 /**
  * A simple utility class that is responsible for applying delays to some actions.
  */
@@ -61,4 +63,10 @@ object RateLimiter {
             block()
         }
     }
+
+    /**
+     * Consumes a rate limit that is specific to the connection.
+     */
+    fun Connection.consumeRateLimit(id: String, delay: Long, block: () -> Unit) =
+        consume("$this-$id", delay, block)
 }
