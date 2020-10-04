@@ -1,6 +1,7 @@
 package net.dragonfly.kernel.server.session
 
 import com.esotericsoftware.kryonet.Connection
+import net.dragonfly.kernel.server.users.UsersManagement
 import net.dragonfly.library.DragonflyLibrary
 
 /**
@@ -50,7 +51,11 @@ object SessionManager {
      * Ends the session of the given [connection] by removing it from the [sessions]
      * storage.
      */
-    fun endSession(connection: Connection) = sessions.remove(connection)
+    fun endSession(connection: Connection) {
+        val session = sessions.remove(connection) ?: return
+
+        UsersManagement.endSession(session)
+    }
 
     /**
      * Convenient access to the [Session] of a [Connection] that throws an error if no session
