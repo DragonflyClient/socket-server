@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.*
 import net.dragonfly.kernel.collector.ListenerCollector.registerListeners
 import net.dragonfly.kernel.collector.PacketCollector.registerPackets
 import net.dragonfly.kernel.logger.SocketLogger
+import net.dragonfly.kernel.server.listener.ServerListenerSupplier
 import net.dragonfly.kernel.server.session.SessionManager.sessionOrNull
 import net.dragonfly.kernel.server.statistics.Statistics
 import org.apache.logging.log4j.LogManager
@@ -24,7 +25,7 @@ object DragonflySocketServer {
             start()
             bind(7331)
             registerPackets()
-            registerListeners("net.dragonfly.kernel.server")
+            registerListeners(ServerListenerSupplier)
         }
 
         fixedRateTimer("Keep Alive Inspector", true, 0, 1000 * 30) {
