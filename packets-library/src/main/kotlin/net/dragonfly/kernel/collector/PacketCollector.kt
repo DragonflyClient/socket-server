@@ -7,9 +7,6 @@ import net.dragonfly.kernel.packets.client.*
 import net.dragonfly.kernel.packets.server.OnlineAccountsPacket
 import net.dragonfly.kernel.packets.server.StartSessionResponsePacket
 import org.apache.logging.log4j.LogManager
-import org.reflections.Reflections
-import org.reflections.util.ClasspathHelper
-import org.reflections.util.ConfigurationBuilder
 import kotlin.properties.Delegates
 
 /**
