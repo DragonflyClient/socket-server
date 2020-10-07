@@ -11,6 +11,7 @@ class DisconnectListener : Listener() {
 
     override fun disconnected(connection: Connection) = synchronized(connection) {
         try {
+            connection.session.metadata["last_keep_active"] = System.currentTimeMillis()
             Statistics.updateOnlineTime(connection.session)
             SessionManager.endSession(connection)
 
