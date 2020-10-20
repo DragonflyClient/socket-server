@@ -9,4 +9,5 @@ object Database {
     val client = KMongo.createClient(CONNECTION_STRING).coroutine
     val database = client.getDatabase("dragonfly")
     val statisticsCollection = database.getCollection<Document>("statistics")
+    val accountsCollection = database.getCollection<Document>("accounts")
 }
