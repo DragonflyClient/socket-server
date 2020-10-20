@@ -35,16 +35,7 @@ object DragonflySocketClient {
             client.sendTCP(KeepActivePacket())
         }
 
-        Thread.sleep(10_000)
-        client.sendTCP(UpdateMinecraftAccountPacket("abc"))
-
-        Thread.sleep(10_000)
-        client.sendTCP(UpdateMinecraftAccountPacket("a2536343-02f9-4252-83c5-d06d55612170"))
-
-        Thread.sleep(10_000)
-        client.sendTCP(UpdateMinecraftAccountPacket("a2536343-02f9-4252-83c5-d06d55612170"))
-
-        Thread.sleep(10_000)
+        Thread.sleep(130_000)
         exitProcess(0)
     }
 }

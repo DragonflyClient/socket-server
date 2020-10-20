@@ -11,11 +11,14 @@ object Statistics {
 
     fun updateOnlineTime(session: Session) = runBlocking {
         if (session.metadata["inactive"] == true) return@runBlocking
+
         val firstActiveTime = session.metadata["first_keep_active"] as? Long ?: return@runBlocking
         val lastKeepActive = session.metadata["last_keep_active"] as? Long ?: return@runBlocking
 
         val millis = lastKeepActive - firstActiveTime
         val time = millis / (1000 * 60) // in minutes
+
+        LogManager.getLogger().info("Adding ${time}m to the online time of ${session.account.username}")
 
         val sdf = SimpleDateFormat("MM/yyyy")
         val month = sdf.format(System.currentTimeMillis())
